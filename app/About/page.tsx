@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const AboutFlimfy = () => {
   return (
@@ -21,7 +20,7 @@ const AboutFlimfy = () => {
 
         <DialogContent className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-lg w-full">
           {/* Accessible Title */}
-          <DialogTitle className="text-2xl font-bold mb-4">About Flimfy</DialogTitle>
+          <DialogTitle className="text-2xl font-bold mb-4">About Filmfy</DialogTitle>
 
           {/* Dialog Content */}
           <div className="space-y-4">
