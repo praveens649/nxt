@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Movie } from '../types/Movie'; // Movie type
 import { Skeleton } from '@/components/ui/skeleton'; // Import the ShadCN Skeleton component
+import { useEffect, useState } from 'react';
+import { Movie } from '../types/Movie'; // Movie type
 
 const WatchlistPage: React.FC = () => {
   const [watchlist, setWatchlist] = useState<Movie[]>([]);

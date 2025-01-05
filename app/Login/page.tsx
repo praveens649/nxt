@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Toaster, toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-
+// import { supabase } from './lib/supabase'; // Import the Supabase client
+import { supabase } from '@/lib/supbase';
 const AuthPage: React.FC = () => {
   const [signupData, setSignupData] = useState({
     username: '',
@@ -21,21 +22,60 @@ const AuthPage: React.FC = () => {
 
   const router = useRouter();
 
-  const handleSignup = () => {
-    // Example logic for signup
-    toast.success('Account created successfully!');
-    setSignupData({ username: '', email: '', password: '' });
+  // Handle Signup Logic
+  const handleSignup = async () => {
+    const { email, password } = signupData;
+
+    if (!email || !password || !signupData.username) {
+      toast.error('Please fill in all the fields.');
+      return;
+    }
+
+    try {
+      const { user, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Account created successfully!');
+        // Optionally, you can store the username in a separate table or update user metadata
+        // supabase.from('users').upsert({ username: signupData.username, user_id: user.id });
+        setSignupData({ username: '', email: '', password: '' });
+        router.push('/login');
+      }
+    } catch (error) {
+      toast.error('An error occurred during signup.');
+    }
   };
 
-  const handleLogin = () => {
-    // Example logic for login
-    if (loginData.username && loginData.password) {
-      toast.success('Logged in successfully!');
-      setTimeout(() => {
-        router.push('/'); // Navigate to home page
-      }, 2000); // Delay for the toast message
-    } else {
-      toast.error('Invalid credentials. Please try again.');
+  // Handle Login Logic
+  const handleLogin = async () => {
+    const { username, password } = loginData;
+
+    if (!username || !password) {
+      toast.error('Please enter both username and password.');
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: username,
+        password,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Logged in successfully!');
+        setTimeout(() => {
+          router.push('/'); // Navigate to homepage after login
+        }, 2000);
+      }
+    } catch (error) {
+      toast.error('An error occurred during login.');
     }
   };
 
@@ -64,12 +104,12 @@ const AuthPage: React.FC = () => {
             >
               <div>
                 <label htmlFor="login-username" className="block text-sm font-medium">
-                  Username
+                  Username (Email)
                 </label>
                 <Input
                   id="login-username"
-                  type="text"
-                  placeholder="Enter your username"
+                  type="email"
+                  placeholder="Enter your email"
                   value={loginData.username}
                   onChange={(e) =>
                     setLoginData({ ...loginData, username: e.target.value })
